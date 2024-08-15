@@ -21,15 +21,26 @@ import { Form } from "react-hook-form";
 import { authFormSchema } from "@/lib/utils";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { LabelProps } from "@radix-ui/react-label";
 // import { useForm } from "react-hook-form";
 
 interface CustomInput {
-  control: Control<z.infer<typeof authFormSchema>>;
-  name: FieldPath<z.infer<typeof authFormSchema>>;
+  control: Control<z.infer<typeof formSchema>>;
+  name: FieldPath<z.infer<typeof formSchema>>;
   placeholder: string;
+  label: string;
+  type: string;
 }
 
-const CustomInput = ({ control, name, placeholder }: CustomInput) => {
+const formSchema = authFormSchema("sign-up");
+
+const CustomInput = ({
+  control,
+  name,
+  type,
+  label,
+  placeholder
+}: CustomInput) => {
   return (
     <>
       <FormField
@@ -37,12 +48,13 @@ const CustomInput = ({ control, name, placeholder }: CustomInput) => {
         name={name}
         render={({ field }) => (
           <div className="form-item">
-            <FormLabel className="form-label capitalize">{name}</FormLabel>
+            <FormLabel className="form-label capitalize">{label}</FormLabel>
             <div className="flex w-full flex-col">
               <FormControl>
                 <Input
                   placeholder={placeholder}
                   className="input-class"
+                  type={type}
                   {...field}
                 />
               </FormControl>
