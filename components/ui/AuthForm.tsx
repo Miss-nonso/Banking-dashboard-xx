@@ -21,9 +21,14 @@ import { Input } from "@/components/ui/input";
 import CustomInput from "./CustomInput";
 import { authFormSchema } from "@/lib/utils";
 import { Loader2, Loader2Icon } from "lucide-react";
+import SignUp from "@/app/(auth)/sign-up/page";
+import SignIn from "@/app/(auth)/sign-in/page";
+import { useRouter } from "next/navigation";
+import { signIn, signUp } from "@/lib/actions/user.actions";
 
 const AuthForm = ({ type }: { type: string }) => {
-  const [user, setuser] = useState(null);
+  const router = useRouter();
+  const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
   const formSchema = authFormSchema(type);
@@ -38,12 +43,31 @@ const AuthForm = ({ type }: { type: string }) => {
   });
 
   // 2. Define a submit handler.
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(data: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    // Do something with the form values.
-    // ✅ This will be type-safe and validated.
-    console.log(values);
-    setIsLoading(false);
+
+    try {
+      // console.log(values);
+      // setIsLoading(false);
+      // SIGN UP WITH APPWRITE AND CREATE PLAIN LINK
+      if (type === "sign-up") {
+        const newUser = await signUp(data);
+        setUser(newUser);
+      }
+      // if (type === "sign-in") {
+      //   const response = await signIn({
+      //     email: data.email,
+      //     password: data.password
+      //   });
+      // }
+      // if (response) {
+      //   router.push("/");
+      // }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -67,7 +91,7 @@ const AuthForm = ({ type }: { type: string }) => {
 
             <p className="text-16 font-normal text-gray-600">
               {user
-                ? "Link your accout to get started"
+                ? "Link your account to get started"
                 : "Please enter your details"}
             </p>
           </h1>
@@ -104,6 +128,13 @@ const AuthForm = ({ type }: { type: string }) => {
                     name="address1"
                     type="text"
                     placeholder="Enter your specific address"
+                  />
+                  <CustomInput
+                    control={form.control}
+                    label="City"
+                    name="city"
+                    type="text"
+                    placeholder="Enter your city"
                   />
                   <div className="flex gap-4">
                     {" "}
