@@ -7,11 +7,35 @@ import {
   usePlaidLink
 } from "react-plaid-link";
 import { useRouter } from "next/router";
-import { createLinkToken } from "@/lib/actions/user.actions";
+import {
+  createLinkToken,
+  exchangePublicToken
+} from "@/lib/actions/user.actions";
 
 const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
   // const router = useRouter();
+  // const [token, setToken] = useState("");
+  // useEffect(() => {
+  //   const getLinkToken = async () => {
+  //     const data = await createLinkToken(user);
+  //     setToken(data?.linkToken);
+  //   };
+  //   getLinkToken();
+  // }, [user]);
+
+  // const onSuccess = useCallback<PlaidLinkOnSuccess>(
+  //   async (public_token: string) => {
+  //     await exchangePublicToken({
+  //       publicToken: public_token,
+  //       user
+  //     });
+  //     router.push("/");
+  //   },
+  //   [user]
+  // );
+
   const [token, setToken] = useState("");
+
   useEffect(() => {
     const getLinkToken = async () => {
       const data = await createLinkToken(user);
@@ -22,11 +46,12 @@ const PlaidLink = ({ user, variant }: PlaidLinkProps) => {
 
   const onSuccess = useCallback<PlaidLinkOnSuccess>(
     async (public_token: string) => {
-      //   await exchangePublictoken({
-      //     publicToken: public_token,
-      //     user
-      //   });
-      // router.push("/");
+      await exchangePublicToken({
+        publicToken: public_token,
+        user
+      });
+      // Replace router.push with window.location
+      window.location.href = "/";
     },
     [user]
   );
